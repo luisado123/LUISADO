@@ -1,7 +1,7 @@
 # LUISADO
 Luis conde MVC
 
-se debe establacer LibreriaMCV como Startup project
+al abrir el proyecto en visual studio se debe dar doble click a MyVet.sln y posteriormente se debe establacer LibreriaMCV como Startup project
 
 el tiempo de duracion del token de logueo es de 3 min,se puede cambiar a  gusto en Auth controller
 
