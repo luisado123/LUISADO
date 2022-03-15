@@ -18,4 +18,5 @@ https://github.com/luisado123/API-REST-PROYECTO-TRAINEE-DEFINITIVO
 Logicamente se debe ejecutar primero la api y posteriormente ejecutar el MVC
 
 
+Proyecto realizado por LUIS EDUARDO CONDE PINTO
 ----
