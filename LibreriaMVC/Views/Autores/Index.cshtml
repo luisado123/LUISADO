@@ -1,0 +1,314 @@
+﻿@{
+    ViewData["Title"] = "Mis Autores";
+}
+
+<h1>Listado de Autores</h1>
+
+
+<p>
+
+    <button class="btn btn-primary" onclick="nuevoAutor()">
+
+        <i class="fas fa-user"></i> <i class="fas fa-feather-alt"></i>  Nuevo Autor
+    </button>
+</p>
+
+<div class="row">
+
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">apellidos</th>
+                <th scope="col">Opciones</th>
+            </tr>
+        </thead>
+
+        <tbody id="cuerpoAutor"></tbody>
+    </table>
+
+</div>
+
+
+
+<div class="modal fade" id="modalAutor" tabindex="1" role="dialog" aria-labelledby="modalAutorLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="idTituloModalAutor">Crear Autor</h5>
+            </div>
+            <div class="modal-body">
+                <form>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label for="recipient-name" class="col-form-label">Nombre</label>
+                            <input type="text" class="form-control" id="txtNameAutor" placeholder="Nombres del autor" required>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="recipient-name" class="col-form-label">Apellidos</label>
+                            <input type="text" class="form-control" id="txtApellidosAutor" placeholder="Apellidos del autor" required>
+                        </div>
+                    </div>
+
+                  
+
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    <i class="fas fa-window-close"></i>
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-success" onclick="guardarAutor()">
+                    <i class="far fa-save"></i>
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts{
+  @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+<script type="text/javascript" charset="utf-8">
+    //var listaPets= JSON.parse('@Json.Serialize(@Model)');
+    var listaAutor= [];
+    let idAutor='';
+  let idEditAutor='';
+    $(document).ready(function () {
+       getAllAutor();
+   
+    });
+    function getAllAutor()
+    {
+        modalProcesando(true);
+        $.ajax({
+            url: '@Url.Action("GetAllAutores", "Autores")',
+            method: 'GET',
+            dataType: "json",
+            success: function (data) {
+                modalProcesando(false);
+                listaAutor=data;
+                 console.log(listaAutor);
+                 if(data.success)
+                {
+                    listaAutor=data.result;
+                     cargarGridAutor(listaAutor);
+                    console.log(listaAutor);
+                }else{
+                    Swal.fire(
+                                'Opps!',
+                                data.message,
+                                'error');
+                }
+            
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                    modalProcesando(false);
+                    console.error(xhr, textStatus, errorThrown);
+                }
+         });
+    }
+    function cargarGridAutor(data){
+        
+        $("#cuerpoAutor").html("");
+       
+        
+        for(var i=0; i<data.length; i++){
+            
+            console.log(data);
+            var tr=`
+             <tr>
+                <th>`+ data[i].nombre+ `</th>
+                <th> `+ data[i].apellidos +`</th>
+                <td>
+              <button  class="btn btn-warning" onclick="editarAutor(`+ data[i].idAutor+`)"><i class="fas fa-edit"></i> Editar</button>
+             <button class="btn btn-danger" onclick="eliminarAutor(`+ data[i].idAutor+`)"><i class="far fa-trash-alt"></i> Eliminar</button>
+                </td>
+            </tr>
+            `;
+            $("#cuerpoAutor").append(tr);
+        }
+    }
+    function eliminarAutor(idAutor)
+    {
+        console.log("mandó a eliminar", idAutor);
+        Swal.fire({
+            title: '¿Confirmar Eliminacion?',
+            text: "No podrás revertir esto.!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Si, Eliminar!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                modalProcesando(true);
+                //petición
+                $.ajax({
+                    url: '@Url.Action("DeleteAutor", "Autores")',
+                    method: 'DELETE',
+                    data:{
+                        idAutor:idAutor
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        modalProcesando(false);
+                        console.log(data);
+                        if(data.success){
+                            
+                            listaAutor=Object.values(listaAutor).filter(x=>x.idAutor!=idAutor);
+                          
+                            cargarGridAutor(listaAutor);
+                            Swal.fire(
+                                'Eliminado!',
+                                data.message,
+                                'success');
+                        }else{
+                            Swal.fire(
+                                'Error!',
+                                data.message,
+                                'error');
+                        }
+                     },
+                     error: function (xhr, textStatus, errorThrown) {
+                         modalProcesando(false);
+                         console.error(xhr, textStatus, errorThrown);
+                     }
+                  });
+                }
+            });
+        }
+    function nuevoAutor(){
+    
+       $('#idTituloModalAutor').html("Crear Autor");
+       $('#modalAutor').modal({keyboard:true});
+    }
+ 
+   
+  
+    function guardarAutor(){
+        if(validarForm())
+        {
+               console.log("el id del autor es ");
+            console.log(idAutor);
+           
+            let parametro={
+                nombres:$("#txtNameAutor").val(),
+                apellidos:$("#txtApellidosAutor").val(),
+                
+            };
+            console.log("el id del autor a  editar  en este caso es ");
+            console.log(idEditAutor);
+            
+            if(idEditAutor=='')
+            {
+                modalProcesando(true);
+                $.ajax({
+                    url: '@Url.Action("InsertAutor", "Autores")',
+                    method: 'POST',
+                    data:parametro,
+                    dataType: "json",
+                    success: function (data) {
+                        modalProcesando(false);
+                        console.log(data);
+                        if (data.success){
+                            $('#modalAutor').modal('hide');
+                            limpiarForm();
+                            toastMessage('success','Autor Guardado exitosamente!');
+                            getAllAutor();
+                        }else{
+                             toastMessage('error','Hubo un error al guardar, por favor intentarlo nuevamente!');
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                            modalProcesando(false);
+                            toastMessage('error','Hubo un error al guardar, por favor intentarlo nuevamente!');
+                            console.error(xhr, textStatus, errorThrown);
+                        }
+                 });
+            }else{
+                parametro.Id=idEditAutor;       
+             
+                modalProcesando(true);
+                $.ajax({
+                    url: '@Url.Action("UpdateAutor", "Autores")',
+                    method: 'PUT',
+                    data:parametro,
+                    dataType: "json",
+                    success: function (data) {
+                        modalProcesando(false);
+                        console.log(data);
+                        if (data){
+                            $('#modalAutor').modal('hide');
+                            limpiarForm();
+                            toastMessage('success','Autor Actualizado exitosamente!');
+                            getAllAutor();
+                        }else{
+                             toastMessage('error','Hubo un error al guardar, por favor intentarlo nuevamente!');
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                            modalProcesando(false);
+                            toastMessage('error','Hubo un error al guardar, por favor intentarlo nuevamente!');
+                            console.error(xhr, textStatus, errorThrown);
+                        }
+                 });
+            }
+        }
+    }
+    function validarForm()
+    {
+        if($("#txtNameAutor").val()=='')
+        {
+                $("#txtNameAutor").focus();
+                toastMessage('warning','El nombre es obligatorio.');
+                return false;
+        }
+        if($("#txtApellidosAutor").val()=='')
+        {
+                $("#txtApellidosAutor").focus();
+                toastMessage('warning','los apellidos son obligatorios.');
+                return false;
+        }
+     
+        return true;
+    }
+    function limpiarForm()
+    {
+       $("#txtNameAutor").val('');
+       $("#txtApellidosAutor").val('');
+       idAutor='';
+       cargarGridAutor(listaAutor);
+    }
+   
+  
+    function editarAutor(idAutor)
+    {
+       
+        idEditAutor=idAutor;
+        console.log("este es el id del autor a editar")
+         console.log(idEditAutor);
+        let autor=listaAutor.find(x=>x.idAutor==idAutor);
+      
+    
+        $('#txtNameAutor').val(autor.nombre);
+           $('#txtApellidosAutor').val(autor.apellidos);
+       
+     
+       $('#idTituloModalAutor').html("Editar Autor");
+       $('#modalAutor').modal({keyboard:true});
+    }
+</script>
+}

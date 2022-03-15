@@ -1,4 +1,4 @@
-using Infraestructure.Core.Data;
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,13 +29,8 @@ namespace MyVet
         {
             //aca va la configuracion para conectar a la BD
             //necesitamos el nugget entityFreameworkCore.SqlServer y el tol
-            #region Context SQL Server
-            services.AddDbContext<DataContext>(options =>
-            {
-                options.UseSqlServer(this.Configuration.GetConnectionString("ConnectionStringSQLServer"));
-                   
-            });
-            #endregion
+         
+           
 
             #region Inyeccion de dependencia
             //llamado de la dependencia

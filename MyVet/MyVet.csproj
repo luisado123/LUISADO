@@ -13,8 +13,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MyVet.Domain\MyVet.Domain.csproj" />
-  </ItemGroup>
-
 </Project>
