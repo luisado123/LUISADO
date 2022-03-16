@@ -5,7 +5,7 @@ al abrir el proyecto en visual studio se debe dar doble click a MyVet.sln y post
 
 el tiempo de duracion del token de logueo es de 3 min,se puede cambiar a  gusto en Auth controller
 
-Funcionan Todos los crud(Libros,Autores,Editoriales)
+Funcionan Todos los crud(Libros,Autores,Editoriales) y hay una vista especifica para ver el listado de usuarios creados
 
 La validacion de permisos(admin,usuario normal) no esta habilitada debido a que   no logre solucionar un fallo con  el handler de permisos
 por lo que cualquier usuario puede hacer cualquier cosa en el crud
