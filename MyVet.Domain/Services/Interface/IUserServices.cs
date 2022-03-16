@@ -12,5 +12,7 @@ namespace MyVet.Domain.Services.Interface
         Task<ResponseDto> Login(UserDto user);
        
         #endregion
+          
+         Task<ResponseDto> GetAllUsers(string token);
     }
 }
