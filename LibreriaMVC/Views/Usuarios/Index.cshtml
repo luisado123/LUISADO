@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title"] = "Libros";
+}
+
+<h1>Listado de Usuarios</h1>
+
+
+<p>
+
+    
+
+</p>
+ 
+
+<div class="row">
+
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Correo</th>
+
+            </tr>
+        </thead>
+
+        <tbody id="cuerpoUsuario"></tbody>
+    </table>
+
+</div>
+
+
+
+
+
+
+
+@section Scripts{
+  @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+<script type="text/javascript" charset="utf-8">
+    //var listaPets= JSON.parse('@Json.Serialize(@Model)');
+    var listaUsuarios= [];
+    let idUsuario='';
+  
+ 
+    $(document).ready(function () {
+     getAllUsuarios();
+       
+   
+    });
+    function getAllUsuarios()
+    {
+        modalProcesando(true);
+        $.ajax({
+            url: '@Url.Action("GetAllUsuarios", "Usuarios")',
+            method: 'GET',
+            dataType: "json",
+            success: function (data) {
+                modalProcesando(false);
+                listaUsuarios=data;
+                 console.log(listaUsuarios);
+                 if(data.success)
+                {
+                    listaUsuarios=data.result;
+                     cargarGridUsuarios(listaUsuarios);
+                   
+                }else{
+                    Swal.fire(
+                                'Opps!',
+                                data.message,
+                                'error');
+                }
+            
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                    modalProcesando(false);
+                    console.error(xhr, textStatus, errorThrown);
+                }
+         });
+    }
+
+    
+  
+
+
+    
+    
+
+
+    function cargarGridUsuarios(data){
+        
+        $("#cuerpoUsuario").html("");
+       
+         console.log("este es el cargar grid libros");
+            console.log(data);
+        for(var i=0; i<data.length; i++){
+           
+            var tr=`
+             <tr>
+                <th>`+ data[i].name+' '+data[i].lastName+`</th>
+                <th> `+ data[i].email +`</th>
+       
+            </tr>
+            `;
+            $("#cuerpoUsuario").append(tr);
+        }
+    }
+
+     
+
+   
+
+
+    
+       
+   
+ 
+   
+  
+   
+   
+
+    
+ 
+  
+ 
+</script>
+}
