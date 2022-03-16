@@ -7,6 +7,7 @@ using MyVet.Domain.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 
 namespace MyVet.Domain.Services
