@@ -67,6 +67,31 @@ namespace MyVet.Domain.Services
 
         #endregion
 
+#region obtener
+
+        public async Task<ResponseDto> GetAllUsers(string token)
+        {
+            string urlBase = _config.GetSection("ApiMyVet").GetSection("UrlBase").Value;
+            string controller = _config.GetSection("ApiMyVet").GetSection("ControlerUsers").Value;
+            string method = _config.GetSection("ApiMyVet").GetSection("MethodGetUsers").Value;
+
+
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers.Add("Token", token);
+
+            ResponseDto response = await _restService.GetRestServiceAsync<ResponseDto>(urlBase, controller, method, parameters, headers);
+            if (response.Success)
+                response.Result = JsonConvert.DeserializeObject<List<ConsultarUsuariosDto>>(response.Result.ToString());
+
+            return response;
+
+        }
+
+        #endregion
+
+
+
         
     }
 }
